@@ -27,12 +27,11 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 	JButton searchButton;
 	JPanel centrePanel, topPanel, bottomPanel;
 	JTextField searchField;
-	JLabel programTitle;
 	JTextArea results;
+	JLabel programTitle;
 	String search;
 	File file;
 	Scanner scan;
-	
 
 	// Constructors
 	public SearchEngine(String title) {
@@ -45,9 +44,10 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 		searchButton = new JButton("Search");
 		programTitle = new JLabel("Search Engine");
 		results = new JTextArea();
+		results.setEditable(false);
 		searchField = new JTextField();
 		searchField.setText("Enter Word...");
-
+		
 		searchButton.setPreferredSize(new Dimension(100, 40));
 		searchField.setPreferredSize(new Dimension(100, 30));
 		results.setPreferredSize(new Dimension(100, 150));
@@ -72,7 +72,6 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 		setVisible(true);
 	}
 
-	
 	//Methods
 	
 	@Override
@@ -80,12 +79,11 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 		//change the path to the path that your files are in
 		String path = "C:\\Users\\Gabriel Hynes\\eclipse-workspace\\C18324463 Assignment\\";
 		
-		
 		if (buttonEvent.getSource() == searchButton) {
+			results.setText(null);
 			try {
 			 File folder = new File(path);
 				 File[] listOfFiles = folder.listFiles();
-				 
 				 //test if there is files in list
 				 if (listOfFiles.length > 0) {
 					 
@@ -101,9 +99,10 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 				         while (scan.hasNext()){
 				        	//using a word variable to check each word 
 				            String word = scan.next();
-				            //if word is equal to what you typed then set result field to name of file you are in
+				            //if word is equal to what you typed then set result field to name of file you are in     
 				            if(word.equals(searchField.getText())){
-				            	results.setText(listOfFiles[i].getName());
+				            	results.append(listOfFiles[i].getName() + "\n");
+				            	//setText(listOfFiles[i].getName());
 				            }
 				          }//end while
 				      }//end if
@@ -113,41 +112,31 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
-
 			}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent event) {
 		searchField.setText("");
-
 	}
-
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
-
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
-
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
-
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
