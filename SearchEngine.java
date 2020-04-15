@@ -13,7 +13,6 @@ import java.util.Scanner;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -50,7 +49,7 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 		searchField.setText("Enter Word...");
 		
 		searchButton.setPreferredSize(new Dimension(100, 40));
-		searchField.setPreferredSize(new Dimension(100, 30));
+		searchField.setPreferredSize(new Dimension(130, 30));
 		results.setPreferredSize(new Dimension(100, 150));
 
 		searchButton.addActionListener(this);
@@ -94,19 +93,46 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 				   for (int i = 0; i < listOfFiles.length; i++) 
 				   {
 					  //if document is a file then 
-				      if (listOfFiles[i].isFile()) 
+				      if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".txt")) 
 				      {
 				    	 //read the file
 				         scan = new Scanner(new BufferedReader(new FileReader(path + listOfFiles[i].getName())));
 				         //while the file has a next line
 				         while (scan.hasNext())
 				         {	
-				        	 //using a word variable to check each word 
-				        	 String word = scan.nextLine();//ONLY SCANS WORDS IF ON THE SAME LINE, FIX SO SCANS WORDS ON ANY LINE
-				        	 //if word is equal to what you typed then set result field to name of file you are in
-				        	 if(word.contains(searchField.getText()))
+				        	 //Check how many words have been entered
+				        	 String text = searchField.getText();
+				        	 String [] splitter = text.trim().split("\\p{javaSpaceChar}{1,}");
+				        	 int numOfWords = splitter.length;
+				        	 if (numOfWords == 1) 
 				        	 {
-				        		 results.append(listOfFiles[i].getName() + "\n");
+				        		 String word = scan.next();//ONLY SCANS WORDS IF ON THE SAME LINE, FIX SO SCANS WORDS ON ANY LINE
+				        		 //word.equalsIgnoreCase(word); didn't work
+					        	 if (searchField.getText().endsWith("*"))
+					        	 {
+					        		 searchField.setText("" + searchField.getText().substring(0, searchField.getText().length() - 1));
+					        		 if (word.startsWith(searchField.getText())) 
+					        		 {
+					        			 results.append(listOfFiles[i].getName() + "\n");
+					        			 searchField.setText(searchField.getText() + "*");
+					        		 } else 
+					        		 {
+					        			 searchField.setText(searchField.getText() + "*");
+					        		 }
+					        	 } //else if word is equal to what you typed then set result field to name of file you are in
+					        	 else if(word.equals(searchField.getText()))
+					        	 {
+					        		 results.append(listOfFiles[i].getName() + "\n");
+					        	 }
+				        	 } else 
+				        	 {
+				        		//using a word variable to check each word
+				        		 String word = scan.nextLine();//ONLY SCANS WORDS IF ON THE SAME LINE, FIX SO SCANS WORDS ON ANY LINE
+					        	 //else if word is equal to what you typed then set result field to name of file you are in
+					        	 if(word.contains(searchField.getText()))
+					        	 {
+					        		 results.append(listOfFiles[i].getName() + "\n");
+					        	 }
 				        	 }
 				          }//end while
 				      }//end if
@@ -117,6 +143,7 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 					e.printStackTrace();
 				}
 			}
+		scan.close();
 	}
 
 	@Override
