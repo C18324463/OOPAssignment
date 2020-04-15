@@ -13,6 +13,7 @@ import java.util.Scanner;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -75,38 +76,41 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 	//Methods
 	
 	@Override
-	public void actionPerformed(ActionEvent buttonEvent){
+	public void actionPerformed(ActionEvent buttonEvent) 
+	{
 		//change the path to the path that your files are in
 		String path = "C:\\Users\\Gabriel Hynes\\eclipse-workspace\\C18324463 Assignment\\";
 		
-		if (buttonEvent.getSource() == searchButton) {
+		if (buttonEvent.getSource() == searchButton) 
+		{
 			results.setText(null);
 			try {
 			 File folder = new File(path);
 				 File[] listOfFiles = folder.listFiles();
 				 //test if there is files in list
-				 if (listOfFiles.length > 0) {
-					 
+				 if (listOfFiles.length > 0) 
+				 {
 					//loop over length of list 
-				   for (int i = 0; i < listOfFiles.length; i++) {
+				   for (int i = 0; i < listOfFiles.length; i++) 
+				   {
 					  //if document is a file then 
-				      if (listOfFiles[i].isFile()) {
-				    	  
+				      if (listOfFiles[i].isFile()) 
+				      {
 				    	 //read the file
 				         scan = new Scanner(new BufferedReader(new FileReader(path + listOfFiles[i].getName())));
-				         
 				         //while the file has a next line
-				         while (scan.hasNext()){
-				        	//using a word variable to check each word 
-				            String word = scan.next();
-				            //if word is equal to what you typed then set result field to name of file you are in     
-				            if(word.equals(searchField.getText())){
-				            	results.append(listOfFiles[i].getName() + "\n");
-				            	//setText(listOfFiles[i].getName());
-				            }
+				         while (scan.hasNext())
+				         {	
+				        	 //using a word variable to check each word 
+				        	 String word = scan.nextLine();//ONLY SCANS WORDS IF ON THE SAME LINE, FIX SO SCANS WORDS ON ANY LINE
+				        	 //if word is equal to what you typed then set result field to name of file you are in
+				        	 if(word.contains(searchField.getText()))
+				        	 {
+				        		 results.append(listOfFiles[i].getName() + "\n");
+				        	 }
 				          }//end while
 				      }//end if
-				  }//end for
+				   	}//end for
 				}//end 1st if
 				            
 				} catch (FileNotFoundException e) {
