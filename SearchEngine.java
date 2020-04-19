@@ -1,4 +1,11 @@
+/* Author: Gabriel Hynes
+ * Date: 20/04/20
+ * Short Description: Search Engine to search files for words
+ */
+//Package
 package assignment;
+
+//Imports
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -20,9 +27,6 @@ import javax.swing.JTextField;
 
 public class SearchEngine extends JFrame implements ActionListener, MouseListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	// Attributes
 	JButton searchButton;
@@ -83,6 +87,7 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 		//Path that your files are in
 		String path = "C:\\Users\\Gabriel Hynes\\eclipse-workspace\\C18324463 Assignment\\";
 		
+		//When user presses the button
 		if (buttonEvent.getSource() == searchButton) 
 		{
 			//Reading in number of files searched for size of holder array
@@ -91,95 +96,110 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 			//Emptying results field after each search
 			results.setText(null);
 			int j = 0;
-			try 
+			//Error check so user enters a number
+			if (num > 0)
 			{
-				//Putting documents in folder into an array
-				File folder = new File(path);
-				File[] listOfFiles = folder.listFiles();
-				//Test if there is files in list
-				if (listOfFiles.length > 0) 
+				//Error check so user has typed a word
+				if (! searchField.getText().matches(".*[^a-z].*"))
 				{
-					//Loop over length of list 
-					for (int i = 0; i < listOfFiles.length; i++) 
+					try 
 					{
-						//If document is a file and ends in .txt then 
-						if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".txt")) 
+						//Putting documents in folder into an array
+						File folder = new File(path);
+						File[] listOfFiles = folder.listFiles();
+						//Test if there is files in list
+						if (listOfFiles.length > 0) 
 						{
-							//Read the file
-							scan = new Scanner(new BufferedReader(new FileReader(path + listOfFiles[i].getName())));
-							//While the file has a next line
-							while (scan.hasNext())
-							{	
-								//Check how many words have been entered
-								String text = searchField.getText();
-								String [] splitter = text.trim().split("\\p{javaSpaceChar}{1,}");
-								int numOfWords = splitter.length;
-								//If only one word is being searched
-								if (numOfWords == 1) 
+							//Loop over length of list 
+							for (int i = 0; i < listOfFiles.length; i++) 
+							{
+								//If document is a file and ends in .txt then 
+								if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".txt")) 
 								{
-									//Scan each individual word
-									String word = scan.next();
-									//Checking if its a text file
-									if (searchField.getText().endsWith("*"))
-									{
-										//Removing the *
-										searchField.setText("" + searchField.getText().substring(0, searchField.getText().length() - 1));
-										//If word scanned is an exact match to the entered word
-										if (word.equals(searchField.getText()))
+									//Read the file
+									scan = new Scanner(new BufferedReader(new FileReader(path + listOfFiles[i].getName())));
+									//While the file has a next line
+									while (scan.hasNext())
+									{	
+										//Check how many words have been entered
+										String text = searchField.getText();
+										String [] splitter = text.trim().split("\\p{javaSpaceChar}{1,}");
+										int numOfWords = splitter.length;
+										//If only one word is being searched
+										if (numOfWords == 1) 
 										{
-											//Put file in results field
-											results.append(listOfFiles[i].getName() + " 100% match" + "\n");
-											//Put * back on the typed word for going through the loop again
-											searchField.setText(searchField.getText() + "*");
-										}//If word scanned begins with entered word
-										else if (word.startsWith(searchField.getText())) 
+											//Scan each individual word
+											String word = scan.next();
+											//Checking if its a text file
+											if (searchField.getText().endsWith("*"))
+											{
+												//Removing the *
+												searchField.setText("" + searchField.getText().substring(0, searchField.getText().length() - 1));
+												//If word scanned is an exact match to the entered word
+												if (word.equals(searchField.getText()))
+												{
+													//Put file in results field
+													results.append(listOfFiles[i].getName() + " 100% match" + "\n");
+													//Put * back on the typed word for going through the loop again
+													searchField.setText(searchField.getText() + "*");
+												}//If word scanned begins with entered word
+												else if (word.startsWith(searchField.getText())) 
+												{
+													//Put in holder array to be printed to results later
+													holder[j] = listOfFiles[i].getName();
+													j++;
+													searchField.setText(searchField.getText() + "*");
+												} else 
+												{
+													searchField.setText(searchField.getText() + "*");
+												}//End of if-else
+											}//Else if word is equal to what you typed then set result field to name of file you are in
+											else if(word.equals(searchField.getText()))
+											{
+												results.append(listOfFiles[i].getName() + " 100% match" +"\n");
+											}//End if-else
+										}//else if searching more than one word, for example 2 words or phrase/sentence
+										else if (numOfWords > 1)
 										{
-											//Put in holder array to be printed to results later
-											holder[j] = listOfFiles[i].getName();
-											j++;
-											searchField.setText(searchField.getText() + "*");
-										} else 
-										{
-											searchField.setText(searchField.getText() + "*");
-										}//End of if-else
-									}//Else if word is equal to what you typed then set result field to name of file you are in
-									else if(word.equals(searchField.getText()))
-									{
-										results.append(listOfFiles[i].getName() + " 100% match" +"\n");
-									}//End if-else
-								}//else if searching more than one word, for example 2 words or phrase/sentence
-								else if (numOfWords > 1)
+											//Using a word variable to check each line
+											String line = scan.nextLine();
+											//If line has the words/phrase entered, put file name into results field
+											if(line.contains(searchField.getText()))
+											{
+												results.append(listOfFiles[i].getName() + " 100% match" + "\n");
+											}//End if
+										}//End of if
+									}//End while
+								}//End if
+							}//End for
+							/* For any file names in the holder array, that weren't an exact match to the typed word,
+							put those files in afterwards, as a way to rank the files in order of closest match to 
+							entered word */
+							for (int k = 0; k < holder.length; k++)
+							{
+								if (holder[k] != null)
 								{
-									//Using a word variable to check each line
-									String line = scan.nextLine();
-									//If line has the words/phrase entered, put file name into results field
-									if(line.contains(searchField.getText()))
-									{
-										results.append(listOfFiles[i].getName() + "\n");
-									}//End if
-								}//End of if
-							}//End while
-						}//End if
-					}//End for
-					/* For any file names in the holder array, that weren't an exact match to the typed word,
-					put those files in afterwards, as a way to rank the files in order of closest match to 
-					entered word */
-					for (int k = 0; k < holder.length; k++)
+									results.append(holder[k] + " 75% match" + "\n");
+								}
+							}
+								}//End if          
+					} catch (FileNotFoundException e)
 					{
-						if (holder[k] != null)
-						{
-							results.append(holder[k] + " 75% match" + "\n");
-						}
-					}
-						}//End if          
-			} catch (FileNotFoundException e)
+						e.printStackTrace();
+						System.out.println("No Files Found");
+					}//End try-catch
+				} else 
+				{
+					JOptionPane.showMessageDialog(this, "Error, please enter a word");
+				}//End if-else
+			} else
 			{
-				e.printStackTrace();
-			}
-		}
+				JOptionPane.showMessageDialog(this, "Error, please enter a number of files to be searched and try again");
+			}//End if-else
+		}//End if
 		//Close the scanner
 		scan.close();
-	}
+	}//End method
 
 	@Override
 	public void mouseClicked(MouseEvent event) 
