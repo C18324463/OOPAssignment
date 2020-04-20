@@ -91,7 +91,7 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 		if (buttonEvent.getSource() == searchButton) 
 		{
 			//Reading in number of files searched for size of holder array
-			int num = Integer.parseInt(JOptionPane.showInputDialog(this, "How many files are you searching?" + " Please Enter a number"));
+			int num = Integer.parseInt(JOptionPane.showInputDialog(this, "How many files are you searching?" + " Please enter a number"));
 			String[] holder = new String[num];
 			//Emptying results field after each search
 			results.setText(null);
@@ -100,7 +100,7 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 			if (num > 0)
 			{
 				//Error check so user has typed a word
-				if (! searchField.getText().matches(".*[^a-z].*"))
+				if (! searchField.getText().matches(".*[^a-z + *].*"))
 				{
 					try 
 					{
@@ -186,15 +186,15 @@ public class SearchEngine extends JFrame implements ActionListener, MouseListene
 					} catch (FileNotFoundException e)
 					{
 						e.printStackTrace();
-						System.out.println("No Files Found");
+						System.out.println("No Files Found, please try again");
 					}//End try-catch
 				} else 
 				{
-					JOptionPane.showMessageDialog(this, "Error, please enter a word");
+					JOptionPane.showMessageDialog(this, "Error, please enter a word and try again");
 				}//End if-else
 			} else
 			{
-				JOptionPane.showMessageDialog(this, "Error, please enter a number of files to be searched and try again");
+				JOptionPane.showMessageDialog(this, "Error, please enter a positive number of files to be searched and try again");
 			}//End if-else
 		}//End if
 		//Close the scanner
